@@ -64,7 +64,7 @@ export const PlasmicCanvasContext = React.createContext<
 export const usePlasmicCanvasContext = () =>
   React.useContext(PlasmicCanvasContext);
 
-function _PlasmicCanvasHost({ nonce } : { nonce?: string }) {
+function _PlasmicCanvasHost() {
   // If window.parent is null, then this is a window whose containing iframe
   // has been detached from the DOM (for the top window, window.parent === window).
   // In that case, we shouldn't do anything.  If window.parent is null, by the way,
@@ -98,7 +98,6 @@ function _PlasmicCanvasHost({ nonce } : { nonce?: string }) {
       scriptElt.id = "getlibs";
       scriptElt.src = getPlasmicOrigin() + "/static/js/getlibs.js";
       scriptElt.async = false;
-      if (nonce) scriptElt.setAttribute('nonce', nonce);
       scriptElt.onload = () => {
         (window as any).__GetlibsReadyResolver?.();
       };
@@ -170,22 +169,17 @@ interface PlasmicCanvasHostProps {
    * want to retain HRM, then youc an pass enableWebpackHmr={true}.
    */
   enableWebpackHmr?: boolean;
-  /**
-   * A `nonce` to be added to the injected script, useful for a strict
-   * content security policy
-   */
-  nonce?: string;
 }
 
 export const PlasmicCanvasHost: React.FunctionComponent<PlasmicCanvasHostProps> = (
   props
 ) => {
-  const { enableWebpackHmr, nonce } = props;
+  const { enableWebpackHmr } = props;
   const [node, setNode] = React.useState<React.ReactElement<any, any> | null>(
     null
   );
   React.useEffect(() => {
-    setNode(<_PlasmicCanvasHost nonce={nonce} />);
+    setNode(<_PlasmicCanvasHost />);
   }, []);
   return (
     <>
